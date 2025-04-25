@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP32 Motion Alert Simulation</title>
+  <style>
+    body {
+      background-color: #303030;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .esp-design {
+      position: relative;
+      height: 600px; /* Increased height for a bigger image */
+      display: flex;
+      align-items: center;
+    }
+
+    .esp-design img {
+      height: 100%;
+      width: auto;
+      max-width: 100%;
+    }
+
+    .pir-sensor {
+      position: absolute;
+      top: 36%;  /* Adjusted position */
+      left: 6%; /* Adjusted position */
+      width: 10%; /* Increased width */
+      height: 10%; /* Increased height */
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: rgba(61, 61, 61, 0.05);
+      z-index: 10;  /* Ensure it's on top */
+    }
+
+    .pir-sensor:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .led {
+      position: absolute;
+      top: 44%; /* Adjusted position above LED */
+      left: 46%; /* Adjusted position */
+      width: 17px; /* Increased LED size */
+      height: 17px; /* Increased LED size */
+      border-radius: 50%;
+      background-color: rgb(244, 35, 35);
+      box-shadow: 0 0 5px #000;
+      transition: all 0.3s ease;
+    }
+
+    .led.on {
+      background-color: red;
+      box-shadow: 0 0 20px red;
+    }
+
+    #screen {
+      position: absolute;
+      top: 45%; /* Adjusted position */
+      left: 47%; /* Adjusted position */
+      width: 27%; /* Increased width */
+      height: 40%; /* Increased height */
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      padding-right: 5px;
+    }
+
+    .message {
+      background-color: #2a2f3a;
+      padding: 5px 10px;
+      border-radius: 10px 10px 0 10px;
+      color: #d1dbe4;
+      margin: 1px 0;
+      max-width: 80%;
+      font-size: 0.7em;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes vibrate {
+      0% { transform: translate(1px, 1px); }
+      50% { transform: translate(-1px, -1px); }
+      100% { transform: translate(1px, 1px); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .esp-design,
+      .phone {
+        height: 300px;
+      }
+
+      #screen {
+        top: 18%;
+        left: 16%;
+        width: 68%;
+        height: 64%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ESP32 Motion Alert Simulation</h1>
+
+  <div class="container">
+    <div class="esp-design">
+      <img src="Untitled design.png" alt="ESP32 Design">
+      <div class="pir-sensor" onclick="triggerMotion()" title="Click to simulate motion"></div>
+      <div class="led" id="led"></div>
+    </div>
+
+    <!-- Updated phone section: only screen for messages -->
+    <div class="phone">
+      <div id="screen"></div>
+    </div>
+  </div>
+
+  <script>
+    function triggerMotion() {
+      const led = document.getElementById('led');
+      const screen = document.getElementById('screen');
+
+      // Turn on LED
+      led.classList.add('on');
+
+      // Create message
+      const msg = document.createElement('div');
+      msg.className = 'message';
+
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      msg.textContent = `🚨 Motion Detected at ${timeString}`;
+
+      screen.appendChild(msg);
+      screen.scrollTop = screen.scrollHeight;
+
+      // Turn off LED after 1 second
+      setTimeout(() => {
+        led.classList.remove('on');
+      }, 1000);
+
+      // Vibration effect
+      // document.body.style.animation = 'vibrate 0.1s linear 2';
+      // setTimeout(() => {
+      //   document.body.style.animation = '';
+      // }, 200);
+    }
+
+    // Trigger using spacebar
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        triggerMotion();
+      }
+    });
+  </script>
+
+</body>
+</html>
